@@ -1,0 +1,13 @@
+Pillow>=9.0.0
+opencv-python>=4.5.0
+pypandoc>=1.8
+python-docx>=0.8.11
+ebooklib>=0.17.1
+reportlab>=3.6.8
+beautifulsoup4>=4.9.3
+PyPDF2>=3.0.0
+pdf2image>=1.16.0
+svglib>=1.2.1
+cairosvg>=2.5.2
+setuptools>=45.0.0
+setuptools_scm>=6.2.0
