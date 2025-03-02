@@ -1,59 +1,146 @@
 # KDP Formatter
 
-A Python tool for automatically formatting books according to Amazon Kindle Direct Publishing (KDP) standards.
+Narzędzie do automatycznego formatowania książek zgodnie ze standardami Amazon Kindle Direct Publishing (KDP).
 
-## Features
+## Szczegółowa instrukcja instalacji i użytkowania
 
-- Supports multiple input formats (txt, docx, pdf, md, html, etc.)
-- Handles various image formats (jpg, png, tiff, svg, etc.)
-- Converts to KDP-compatible formats (EPUB, MOBI, PDF)
-- Automatic text formatting according to KDP standards
-- Image processing and optimization
-- Special features for coloring books
-- Support for both e-books and print-ready formats
+### 1. Wymagania wstępne
 
-## Installation
+Przed rozpoczęciem upewnij się, że masz zainstalowane:
 
-```bash
-pip install -e .
-```
+1. Python 3.8 lub nowszy
+   - Sprawdź czy masz Python: Otwórz terminal i wpisz `python --version`
+   - Jeśli nie masz, pobierz z [python.org](https://www.python.org/downloads/)
 
-## Requirements
+2. Pandoc
+   - Windows: [Pobierz instalator](https://github.com/jgm/pandoc/releases/latest)
+   - Linux: `sudo apt-get install pandoc`
+   - macOS: `brew install pandoc`
 
-- Python 3.8 or higher
-- Pandoc (for document conversion)
-- ImageMagick (for image processing)
+3. ImageMagick
+   - Windows: [Pobierz instalator](https://imagemagick.org/script/download.php#windows)
+   - Linux: `sudo apt-get install imagemagick`
+   - macOS: `brew install imagemagick`
 
-## Usage
+### 2. Instalacja programu
 
-```bash
-kdp-format input_file [options]
-```
+1. Pobierz program:
+   - Kliknij zielony przycisk "Code" na [stronie projektu](https://github.com/bimberus/kdp-formatter)
+   - Wybierz "Download ZIP"
+   - Rozpakuj pobrany plik
 
-For detailed usage instructions and examples, see the documentation.
+2. Otwórz terminal/wiersz poleceń:
+   - Windows: Wyszukaj "cmd" lub "PowerShell"
+   - macOS/Linux: Otwórz Terminal
 
-## Features
+3. Przejdź do katalogu z programem:
+   ```bash
+   cd ścieżka/do/kdp-formatter
+   ```
 
-### Text Processing
-- Automatic table of contents generation
-- Header formatting
-- Margin and spacing adjustment
-- Page numbering
-- Font compatibility checking
+4. Zainstaluj wymagane biblioteki:
+   ```bash
+   pip install -r requirements.txt
+   pip install -e .
+   ```
 
-### Image Processing
-- Resolution adjustment (300 DPI minimum)
-- Format conversion
-- Size optimization
-- Color profile management (CMYK/RGB)
-- Special coloring book features
+### 3. Jak używać - przykłady
 
-### Output Formats
-- EPUB
-- MOBI (Kindle)
-- Print-ready PDF
-- KPF (Kindle Package Format)
+#### A. Formatowanie dokumentu tekstowego do e-booka
 
-## License
+1. Przygotuj dokument (np. w Wordzie) i zapisz go
+2. Otwórz terminal
+3. Wpisz komendę:
+   ```bash
+   kdp-format "C:\Users\TwojaNazwa\Documents\mojaksiezka.docx" --type text --format epub --output "C:\Users\TwojaNazwa\Documents\gotowa_ksiazka.epub"
+   ```
 
-MIT License
+#### B. Tworzenie kolorowanki
+
+1. Przygotuj obrazek
+2. Wykonaj konwersję:
+   ```bash
+   kdp-format "C:\Users\TwojaNazwa\Pictures\rysunek.png" --type coloring --mirror-pages --output "C:\Users\TwojaNazwa\Pictures\kolorowanka.png"
+   ```
+
+#### C. Przygotowanie okładki książki
+
+1. Przygotuj grafikę okładki
+2. Dostosuj do wymagań KDP:
+   ```bash
+   kdp-format "C:\Users\TwojaNazwa\Pictures\okladka.jpg" --type image --dpi 300 --color-space cmyk --output "C:\Users\TwojaNazwa\Pictures\okladka_kdp.jpg"
+   ```
+
+#### D. Przygotowanie PDF do druku
+
+1. Mając gotowy PDF:
+   ```bash
+   kdp-format "C:\Users\TwojaNazwa\Documents\ksiazka.pdf" --type pdf --page-size letter --output "C:\Users\TwojaNazwa\Documents\ksiazka_do_druku.pdf"
+   ```
+
+### 4. Najważniejsze opcje
+
+- `--type`: Rodzaj przetwarzania
+  - `text` - dla dokumentów tekstowych
+  - `image` - dla obrazów
+  - `pdf` - dla plików PDF
+  - `coloring` - do tworzenia kolorowanek
+
+- `--format`: Format wyjściowy dla dokumentów tekstowych
+  - `epub` - dla e-booków
+  - `pdf` - dla wydań drukowanych
+  - `mobi` - dla Kindle
+
+- `--dpi`: Rozdzielczość obrazów (minimum 300 dla KDP)
+
+- `--color-space`: Przestrzeń kolorów
+  - `rgb` - dla e-booków
+  - `cmyk` - dla druku
+
+- `--page-size`: Rozmiar strony
+  - `letter` - format amerykański
+  - `a4` - format europejski
+
+### 5. Rozwiązywanie problemów
+
+1. Jeśli pojawia się błąd "command not found":
+   - Windows: Upewnij się, że Python jest w PATH
+   - Spróbuj użyć `python -m kdp_formatter` zamiast `kdp-format`
+
+2. Problemy z konwersją obrazów:
+   - Sprawdź czy ImageMagick jest zainstalowany
+   - Upewnij się, że masz prawa do zapisu w katalogu docelowym
+
+3. Problem z formatowaniem tekstu:
+   - Sprawdź czy Pandoc jest zainstalowany
+   - Upewnij się, że dokument źródłowy nie jest uszkodzony
+
+### 6. Wsparcie
+
+Jeśli napotkasz problemy:
+1. Sprawdź sekcję "Issues" na GitHubie
+2. Utwórz nowe zgłoszenie, opisując dokładnie problem
+3. Dołącz informacje o systemie operacyjnym i użytych komendach
+
+### 7. Przykładowy workflow
+
+1. Przygotowanie książki:
+   ```bash
+   # Konwersja tekstu do formatu KDP
+   kdp-format "ksiazka.docx" --type text --format epub
+
+   # Przygotowanie okładki
+   kdp-format "okladka.png" --type image --dpi 300 --color-space cmyk
+
+   # Generowanie wersji do druku
+   kdp-format "ksiazka.pdf" --type pdf --page-size letter
+   ```
+
+2. Przygotowanie kolorowanki:
+   ```bash
+   # Konwersja obrazów na kolorowanki
+   kdp-format "obrazek1.png" --type coloring --mirror-pages
+   kdp-format "obrazek2.png" --type coloring --mirror-pages
+
+   # Łączenie w PDF
+   kdp-format "kolorowanki/*.png" --type pdf --page-size letter --output "kolorowanka_final.pdf"
