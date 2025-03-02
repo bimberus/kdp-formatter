@@ -10,18 +10,25 @@ readme = "README.md"
 requires-python = ">=3.8"
 license = { text = "MIT" }
 dependencies = [
-    "Pillow",
-    "opencv-python",
-    "pypandoc",
-    "python-docx",
-    "ebooklib",
-    "reportlab",
-    "beautifulsoup4",
-    "PyPDF2",
-    "pdf2image",
-    "svglib",
-    "cairosvg",
+    "Pillow>=9.0.0",
+    "opencv-python>=4.5.0",
+    "pypandoc>=1.8",
+    "python-docx>=0.8.11",
+    "ebooklib>=0.17.1",
+    "reportlab>=3.6.8",
+    "beautifulsoup4>=4.9.3",
+    "PyPDF2>=3.0.0",
+    "pdf2image>=1.16.0",
+    "svglib>=1.2.1",
+    "cairosvg>=2.5.2",
 ]
 
+[project.scripts]
+kdp-format = "kdp_formatter.cli.main:main"
+kdp-gui = "kdp_formatter:main"
+
 [tool.setuptools]
-packages = ["kdp_formatter"]
+packages = ["kdp_formatter", "kdp_formatter.processors", "kdp_formatter.cli", "kdp_formatter.gui"]
+
+[project.gui-scripts]
+kdp-formatter = "kdp_formatter:main"

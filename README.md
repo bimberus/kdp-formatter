@@ -70,123 +70,93 @@ Przed rozpoczęciem upewnij się, że masz zainstalowane:
    c) Następnie zainstaluj wymagania:
    ```bash
    pip install --trusted-host pypi.org --trusted-host files.pythonhosted.org -r requirements.txt
-   pip install -e .
+   pip install --trusted-host pypi.org --trusted-host files.pythonhosted.org -e .
    ```
 
-### 3. Jak używać - przykłady
+### 3. Uruchamianie programu
+
+#### Interfejs graficzny (GUI)
+
+Program posiada przyjazny interfejs graficzny, który jest domyślnym sposobem uruchamiania:
+
+1. Uruchom program przez:
+   ```bash
+   kdp-gui
+   ```
+   lub
+   ```bash
+   python -m kdp_formatter
+   ```
+
+2. W interfejsie graficznym:
+   - Wybierz plik wejściowy używając przycisku "Przeglądaj..."
+   - Wybierz typ przetwarzania (tekst, obraz, PDF, kolorowanka)
+   - Ustaw opcje dla wybranego typu przetwarzania
+   - Wybierz lokalizację pliku wyjściowego
+   - Kliknij "Rozpocznij przetwarzanie"
+
+3. Postęp przetwarzania będzie widoczny w oknie programu
+
+#### Wiersz poleceń (CLI)
+
+Alternatywnie, program można uruchomić z wiersza poleceń:
+
+```bash
+kdp-format --help  # Pokaż dostępne opcje
+```
+
+### 4. Przykłady użycia GUI
 
 #### A. Formatowanie dokumentu tekstowego do e-booka
 
-1. Przygotuj dokument (np. w Wordzie) i zapisz go
-2. Otwórz terminal
-3. Wpisz komendę:
-   ```bash
-   kdp-format "C:\Users\TwojaNazwa\Documents\mojaksiezka.docx" --type text --format epub --output "C:\Users\TwojaNazwa\Documents\gotowa_ksiazka.epub"
-   ```
+1. Uruchom `kdp-gui`
+2. Kliknij "Przeglądaj..." i wybierz plik Word/PDF/TXT
+3. Wybierz typ przetwarzania "Tekst"
+4. Wybierz format wyjściowy (np. "epub")
+5. Wybierz lokalizację pliku wyjściowego
+6. Kliknij "Rozpocznij przetwarzanie"
 
 #### B. Tworzenie kolorowanki
 
-1. Przygotuj obrazek
-2. Wykonaj konwersję:
-   ```bash
-   kdp-format "C:\Users\TwojaNazwa\Pictures\rysunek.png" --type coloring --mirror-pages --output "C:\Users\TwojaNazwa\Pictures\kolorowanka.png"
-   ```
+1. Uruchom `kdp-gui`
+2. Wybierz obrazek źródłowy
+3. Wybierz typ przetwarzania "Kolorowanka"
+4. Zaznacz opcję "Strony lustrzane" jeśli potrzebne
+5. Wybierz lokalizację pliku wyjściowego
+6. Kliknij "Rozpocznij przetwarzanie"
 
 #### C. Przygotowanie okładki książki
 
-1. Przygotuj grafikę okładki
-2. Dostosuj do wymagań KDP:
-   ```bash
-   kdp-format "C:\Users\TwojaNazwa\Pictures\okladka.jpg" --type image --dpi 300 --color-space cmyk --output "C:\Users\TwojaNazwa\Pictures\okladka_kdp.jpg"
-   ```
-
-#### D. Przygotowanie PDF do druku
-
-1. Mając gotowy PDF:
-   ```bash
-   kdp-format "C:\Users\TwojaNazwa\Documents\ksiazka.pdf" --type pdf --page-size letter --output "C:\Users\TwojaNazwa\Documents\ksiazka_do_druku.pdf"
-   ```
-
-### 4. Najważniejsze opcje
-
-- `--type`: Rodzaj przetwarzania
-  - `text` - dla dokumentów tekstowych
-  - `image` - dla obrazów
-  - `pdf` - dla plików PDF
-  - `coloring` - do tworzenia kolorowanek
-
-- `--format`: Format wyjściowy dla dokumentów tekstowych
-  - `epub` - dla e-booków
-  - `pdf` - dla wydań drukowanych
-  - `mobi` - dla Kindle
-
-- `--dpi`: Rozdzielczość obrazów (minimum 300 dla KDP)
-
-- `--color-space`: Przestrzeń kolorów
-  - `rgb` - dla e-booków
-  - `cmyk` - dla druku
-
-- `--page-size`: Rozmiar strony
-  - `letter` - format amerykański
-  - `a4` - format europejski
+1. Uruchom `kdp-gui`
+2. Wybierz plik graficzny okładki
+3. Wybierz typ przetwarzania "Obraz"
+4. Ustaw DPI na 300
+5. Wybierz przestrzeń kolorów (CMYK dla druku)
+6. Kliknij "Rozpocznij przetwarzanie"
 
 ### 5. Rozwiązywanie problemów
 
-1. Problemy z instalacją pakietów (pip):
-   - Sprawdź połączenie internetowe
-   - Wykonaj kroki instalacji z punktu 2.5 (trusted-host)
-   - Spróbuj użyć innego połączenia internetowego
-   - Jeśli używasz proxy, ustaw zmienne środowiskowe:
-     ```bash
-     export HTTP_PROXY="http://proxy:port"
-     export HTTPS_PROXY="https://proxy:port"
-     ```
-
-2. Jeśli pojawia się błąd "command not found":
-   - Windows: Upewnij się, że Python jest w PATH
+1. Program się nie uruchamia:
    - Sprawdź czy środowisko wirtualne jest aktywowane
-   - Spróbuj użyć `python -m kdp_formatter` zamiast `kdp-format`
+   - Spróbuj `python -m kdp_formatter`
+   - Sprawdź logi błędów w terminalu
 
-3. Problemy z konwersją obrazów:
-   - Sprawdź czy ImageMagick jest zainstalowany
-   - Upewnij się, że masz prawa do zapisu w katalogu docelowym
-   - Dla Windows: Dodaj ImageMagick do PATH
+2. Problemy z instalacją pakietów (pip):
+   - Użyj opcji `--trusted-host` jak opisano w sekcji instalacji
+   - Sprawdź połączenie internetowe
+   - Spróbuj użyć innego połączenia internetowego
 
-4. Problem z formatowaniem tekstu:
-   - Sprawdź czy Pandoc jest zainstalowany
-   - Upewnij się, że dokument źródłowy nie jest uszkodzony
-   - Sprawdź czy masz wystarczająco miejsca na dysku
+3. Problemy z przetwarzaniem:
+   - Sprawdź czy plik wejściowy jest poprawny
+   - Upewnij się, że masz wystarczająco miejsca na dysku
+   - Sprawdź prawa dostępu do katalogów
 
 ### 6. Wsparcie
 
 Jeśli napotkasz problemy:
 1. Sprawdź sekcję "Issues" na GitHubie
-2. Utwórz nowe zgłoszenie, opisując dokładnie problem
-3. Dołącz informacje o:
-   - Systemie operacyjnym
-   - Użytych komendach
-   - Pełnej treści błędu
-   - Krokach, które doprowadziły do błędu
-
-### 7. Przykładowy workflow
-
-1. Przygotowanie książki:
-   ```bash
-   # Konwersja tekstu do formatu KDP
-   kdp-format "ksiazka.docx" --type text --format epub
-
-   # Przygotowanie okładki
-   kdp-format "okladka.png" --type image --dpi 300 --color-space cmyk
-
-   # Generowanie wersji do druku
-   kdp-format "ksiazka.pdf" --type pdf --page-size letter
-   ```
-
-2. Przygotowanie kolorowanki:
-   ```bash
-   # Konwersja obrazów na kolorowanki
-   kdp-format "obrazek1.png" --type coloring --mirror-pages
-   kdp-format "obrazek2.png" --type coloring --mirror-pages
-
-   # Łączenie w PDF
-   kdp-format "kolorowanki/*.png" --type pdf --page-size letter --output "kolorowanka_final.pdf"
+2. Utwórz nowe zgłoszenie, dołączając:
+   - Zrzut ekranu błędu
+   - Kroki prowadzące do błędu
+   - Logi z terminala
+   - Informacje o systemie operacyjnym
