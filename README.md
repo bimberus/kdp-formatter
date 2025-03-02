@@ -38,9 +38,38 @@ Przed rozpoczęciem upewnij się, że masz zainstalowane:
    cd ścieżka/do/kdp-formatter
    ```
 
-4. Zainstaluj wymagane biblioteki:
+4. Stwórz wirtualne środowisko Python (opcjonalnie, ale zalecane):
    ```bash
-   pip install -r requirements.txt
+   python -m venv kdp-venv
+   ```
+
+   Aktywuj środowisko:
+   - Windows:
+     ```bash
+     kdp-venv\Scripts\activate
+     ```
+   - Linux/macOS:
+     ```bash
+     source kdp-venv/bin/activate
+     ```
+
+5. Zainstaluj wymagane biblioteki:
+
+   **WAŻNE**: W przypadku problemów z połączeniem internetowym podczas instalacji:
+
+   a) Najpierw zaktualizuj pip:
+   ```bash
+   python -m pip install --upgrade pip
+   ```
+
+   b) Ustaw zaufane hosty dla pip:
+   ```bash
+   pip config set global.trusted-host "pypi.org files.pythonhosted.org pypi.python.org"
+   ```
+
+   c) Następnie zainstaluj wymagania:
+   ```bash
+   pip install --trusted-host pypi.org --trusted-host files.pythonhosted.org -r requirements.txt
    pip install -e .
    ```
 
@@ -103,24 +132,41 @@ Przed rozpoczęciem upewnij się, że masz zainstalowane:
 
 ### 5. Rozwiązywanie problemów
 
-1. Jeśli pojawia się błąd "command not found":
+1. Problemy z instalacją pakietów (pip):
+   - Sprawdź połączenie internetowe
+   - Wykonaj kroki instalacji z punktu 2.5 (trusted-host)
+   - Spróbuj użyć innego połączenia internetowego
+   - Jeśli używasz proxy, ustaw zmienne środowiskowe:
+     ```bash
+     export HTTP_PROXY="http://proxy:port"
+     export HTTPS_PROXY="https://proxy:port"
+     ```
+
+2. Jeśli pojawia się błąd "command not found":
    - Windows: Upewnij się, że Python jest w PATH
+   - Sprawdź czy środowisko wirtualne jest aktywowane
    - Spróbuj użyć `python -m kdp_formatter` zamiast `kdp-format`
 
-2. Problemy z konwersją obrazów:
+3. Problemy z konwersją obrazów:
    - Sprawdź czy ImageMagick jest zainstalowany
    - Upewnij się, że masz prawa do zapisu w katalogu docelowym
+   - Dla Windows: Dodaj ImageMagick do PATH
 
-3. Problem z formatowaniem tekstu:
+4. Problem z formatowaniem tekstu:
    - Sprawdź czy Pandoc jest zainstalowany
    - Upewnij się, że dokument źródłowy nie jest uszkodzony
+   - Sprawdź czy masz wystarczająco miejsca na dysku
 
 ### 6. Wsparcie
 
 Jeśli napotkasz problemy:
 1. Sprawdź sekcję "Issues" na GitHubie
 2. Utwórz nowe zgłoszenie, opisując dokładnie problem
-3. Dołącz informacje o systemie operacyjnym i użytych komendach
+3. Dołącz informacje o:
+   - Systemie operacyjnym
+   - Użytych komendach
+   - Pełnej treści błędu
+   - Krokach, które doprowadziły do błędu
 
 ### 7. Przykładowy workflow
 
