@@ -56,7 +56,7 @@ class KDPFormatterGUI:
         ttk.Label(self.format_frame, text="Format wyjściowy:").pack(side=tk.LEFT)
         self.format_var = tk.StringVar(value="epub")
         self.format_combo = ttk.Combobox(self.format_frame, textvariable=self.format_var,
-                                       values=["epub", "pdf", "mobi"], state="readonly")
+                                       values=["epub", "pdf", "mobi", "kpf"], state="readonly")
         self.format_combo.pack(side=tk.LEFT, padx=5)
 
         # Image options
@@ -168,6 +168,13 @@ class KDPFormatterGUI:
             self.pdf_frame.pack(fill=tk.X, pady=5)
             for widget in self.pdf_frame.winfo_children():
                 widget.pack(side=tk.LEFT, padx=5)
+            # For PDF type, also show format frame for output format selection
+            self.format_frame.pack(fill=tk.X, pady=5)
+            for widget in self.format_frame.winfo_children():
+                widget.pack(side=tk.LEFT, padx=5)
+            # Update format combo values for PDF
+            self.format_combo['values'] = ["pdf", "epub", "mobi"]
+            self.format_var.set("pdf")
 
     def _browse_input(self):
         """Open file dialog for input file selection."""
@@ -176,13 +183,14 @@ class KDPFormatterGUI:
         
         if process_type == "text":
             filetypes = [
-                ("Wszystkie obsługiwane", "*.txt;*.docx;*.doc;*.md;*.html;*.htm;*.rtf;*.odt"),
+                ("Wszystkie obsługiwane", "*.txt;*.docx;*.doc;*.md;*.html;*.htm;*.rtf;*.odt;*.pdf"),
                 ("Dokumenty tekstowe", "*.txt"),
                 ("Dokumenty Word", "*.docx;*.doc"),
                 ("Markdown", "*.md"),
                 ("HTML", "*.html;*.htm"),
                 ("Rich Text", "*.rtf"),
-                ("OpenDocument", "*.odt")
+                ("OpenDocument", "*.odt"),
+                ("PDF", "*.pdf")
             ]
         elif process_type in ["image", "coloring"]:
             filetypes = [
@@ -224,10 +232,15 @@ class KDPFormatterGUI:
     def _browse_output(self):
         """Open file dialog for output file selection."""
         process_type = self.type_var.get()
+        format_type = self.format_var.get()
         
-        if process_type == "text":
+        filetypes = []
+        if process_type in ["text", "pdf"]:
             filetypes = [
-                (f"{self.format_var.get().upper()}", f"*.{self.format_var.get()}")
+                ("PDF", "*.pdf"),
+                ("EPUB", "*.epub"),
+                ("MOBI", "*.mobi"),
+                ("KPF", "*.kpf")
             ]
         elif process_type in ["image", "coloring"]:
             filetypes = [
@@ -235,13 +248,11 @@ class KDPFormatterGUI:
                 ("PNG", "*.png"),
                 ("TIFF", "*.tif;*.tiff")
             ]
-        else:
-            filetypes = [("PDF", "*.pdf")]
         
         filename = filedialog.asksaveasfilename(
             title="Zapisz jako",
             filetypes=filetypes,
-            defaultextension=filetypes[0][1].split('.')[-1]
+            defaultextension=f".{format_type}"
         )
         
         if filename:
