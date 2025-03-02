@@ -8,6 +8,7 @@ from docx import Document
 from bs4 import BeautifulSoup
 import ebooklib
 from ebooklib import epub
+import PyPDF2
 
 class TextProcessor:
     """Handles text processing and formatting according to KDP standards."""
@@ -21,7 +22,8 @@ class TextProcessor:
         'htm': 'html',
         'rtf': 'rtf',
         'odt': 'odt',
-        'epub': 'epub'
+        'epub': 'epub',
+        'pdf': 'pdf'  # Added PDF support
     }
 
     KDP_MARGINS = {
@@ -54,6 +56,8 @@ class TextProcessor:
         
         if input_format == 'epub':
             self._read_epub()
+        elif input_format == 'pdf':
+            self._read_pdf()
         else:
             try:
                 self.content = pypandoc.convert_file(
@@ -74,6 +78,24 @@ class TextProcessor:
         
         self.content = '\n'.join(content_parts)
         self.metadata = book.get_metadata('DC', {})
+
+    def _read_pdf(self) -> None:
+        """Read content from PDF file."""
+        with open(self.input_path, 'rb') as file:
+            reader = PyPDF2.PdfReader(file)
+            content_parts = []
+            
+            # Extract text from each page
+            for page in reader.pages:
+                content_parts.append(page.extract_text())
+            
+            self.content = '\n'.join(content_parts)
+            
+            # Get metadata if available
+            self.metadata = reader.metadata if reader.metadata else {}
+
+            # Convert content to HTML format for consistent processing
+            self.content = f"<html><body>{self.content}</body></html>"
 
     def format_content(self) -> None:
         """Apply KDP formatting standards to content."""
@@ -147,30 +169,63 @@ class TextProcessor:
         book = epub.EpubBook()
         
         # Set metadata
-        book.set_title(self.metadata.get('title', ['Untitled'])[0][0])
+        book.set_title(self.metadata.get('title', ['Untitled'])[0][0] if isinstance(self.metadata.get('title', []), list) else 'Untitled')
         book.set_language('en')
         
         # Create chapters
         soup = BeautifulSoup(self.content, 'html.parser')
-        chapters = []
+        sections = soup.find_all(['h1', 'h2', 'p'])
         
-        for i, section in enumerate(soup.find_all(['h1', 'h2'])):
-            # Create chapter
+        if not sections:
+            # If no sections found, create a single chapter
             chapter = epub.EpubHtml(
-                title=section.get_text(),
-                file_name=f'chap_{i}.xhtml',
-                content=str(section) + str(section.find_next_siblings())
+                title='Chapter 1',
+                file_name='chap_1.xhtml',
+                content=self.content
             )
             book.add_item(chapter)
-            chapters.append(chapter)
+            book.toc = [(epub.Section('Chapter 1'), chapter)]
+            book.spine = ['nav', chapter]
+        else:
+            # Create chapters based on sections
+            current_chapter = []
+            chapters = []
+            chapter_count = 0
+            
+            for section in sections:
+                if section.name in ['h1', 'h2']:
+                    # Save previous chapter if exists
+                    if current_chapter:
+                        chapter_count += 1
+                        chapter = epub.EpubHtml(
+                            title=current_chapter[0].get_text(),
+                            file_name=f'chap_{chapter_count}.xhtml',
+                            content=''.join(str(tag) for tag in current_chapter)
+                        )
+                        book.add_item(chapter)
+                        chapters.append(chapter)
+                        current_chapter = []
+                
+                current_chapter.append(section)
+            
+            # Add last chapter
+            if current_chapter:
+                chapter_count += 1
+                chapter = epub.EpubHtml(
+                    title=current_chapter[0].get_text() if current_chapter[0].name in ['h1', 'h2'] else f'Chapter {chapter_count}',
+                    file_name=f'chap_{chapter_count}.xhtml',
+                    content=''.join(str(tag) for tag in current_chapter)
+                )
+                book.add_item(chapter)
+                chapters.append(chapter)
+            
+            # Add navigation
+            book.toc = [(epub.Section(chapter.title), chapter) for chapter in chapters]
+            book.spine = ['nav'] + chapters
 
-        # Add navigation
-        book.toc = [(epub.Section(chapter.title), chapter) for chapter in chapters]
+        # Add required elements
         book.add_item(epub.EpubNcx())
         book.add_item(epub.EpubNav())
-        
-        # Create spine
-        book.spine = ['nav'] + chapters
         
         # Write epub
         epub.write_epub(str(output_path), book)
